@@ -1,0 +1,1316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Admin panel for Abdullah's portfolio - Add and manage projects">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="theme-color" content="#4a6cf7">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Abdullah Admin">
+    <title>Admin | Abdullah - Web Developer</title>
+
+    <!-- PWA Support -->
+    <link rel="manifest" href="/manifest.json">
+    <link rel="apple-touch-icon" href="/assets/icons/icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/icons/icon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/icons/icon-16x16.png">
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/pwa.css">
+    <link rel="stylesheet" href="css/admin-dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Security Headers -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net 'unsafe-inline'; style-src 'self' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net 'unsafe-inline'; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data:; connect-src 'self';">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="SAMEORIGIN">
+    <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
+
+    <!-- Chart.js for analytics -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="logo">
+                <h1>Abdullah<span>.</span></h1>
+            </div>
+            <div class="nav-links">
+                <ul>
+                    <li><a href="index.html" data-i18n="nav-home">Home</a></li>
+                    <li><a href="projects.html" data-i18n="nav-projects">Projects</a></li>
+                    <li><a href="blog.html" data-i18n="nav-blog">Blog</a></li>
+                    <li><a href="admin.html" class="active" data-i18n="nav-admin">Admin</a></li>
+                    <li><a href="contact.html" data-i18n="nav-contact">Contact</a></li>
+                </ul>
+            </div>
+            <div class="theme-toggle-container">
+                <div class="theme-toggle" id="theme-toggle" role="switch" aria-checked="false" aria-label="Toggle dark mode">
+                    <i class="fas fa-sun"></i>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+            <div class="language-container">
+                <div class="language-toggle" id="language-toggle">EN</div>
+                <div class="language-menu" id="language-menu">
+                    <button data-lang="en">English</button>
+                    <button data-lang="ar">العربية</button>
+                    <button data-lang="es">Español</button>
+                </div>
+            </div>
+            <div class="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section class="admin-section">
+            <div class="section-header">
+                <h1 data-i18n="admin-title">Admin Panel</h1>
+                <div class="underline"></div>
+                <p data-i18n="admin-subtitle">Add and manage your portfolio projects</p>
+            </div>
+
+            <div class="admin-container">
+                <div class="admin-login" id="login-form">
+                    <h2 data-i18n="admin-login">Login</h2>
+                    <form id="adminLoginForm">
+                        <!-- CSRF Protection -->
+                        <input type="hidden" id="csrf_token" name="csrf_token">
+
+                        <div class="form-group">
+                            <label for="username" data-i18n="admin-username">Username</label>
+                            <input type="text" id="username" name="username" required maxlength="50" autocomplete="username">
+                        </div>
+                        <div class="form-group">
+                            <label for="password" data-i18n="admin-password">Password</label>
+                            <input type="password" id="password" name="password" required maxlength="100" autocomplete="current-password">
+                        </div>
+
+                        <!-- CAPTCHA Protection -->
+                        <div class="form-group captcha-container">
+                            <label for="admin-captcha">CAPTCHA Verification</label>
+                            <div class="captcha-box">
+                                <div id="admin-captcha-image" class="captcha-image"></div>
+                                <button type="button" id="refresh-admin-captcha" class="refresh-captcha">
+                                    <i class="fas fa-sync-alt"></i> Refresh
+                                </button>
+                            </div>
+                            <input type="text" id="admin-captcha" name="admin-captcha" required placeholder="Enter the code above" maxlength="6">
+                            <div class="error-message" id="admin-captcha-error">Please enter the correct CAPTCHA code</div>
+                        </div>
+
+                        <div class="form-status" id="loginStatus"></div>
+                        <button type="submit" class="btn primary-btn" data-i18n="admin-login">Login</button>
+                    </form>
+                </div>
+
+                <div class="admin-dashboard" id="admin-dashboard" style="display: none;">
+                    <div class="dashboard-header">
+                        <div class="dashboard-title">
+                            <h2 data-i18n="admin-dashboard">Project Management</h2>
+                            <span class="project-count" id="projectCount">0 projects</span>
+                        </div>
+                        <div class="dashboard-actions">
+                            <button id="new-project-btn" class="btn primary-btn">
+                                <i class="fas fa-plus"></i> <span data-i18n="admin-add-project">Add Project</span>
+                            </button>
+                            <button id="logout-btn" class="btn secondary-btn" data-i18n="admin-logout">Logout</button>
+                        </div>
+                    </div>
+
+                    <div class="admin-tabs">
+                        <div class="tab active" data-tab="dashboard">
+                            <i class="fas fa-chart-line"></i> <span data-i18n="admin-dashboard-tab">Dashboard</span>
+                        </div>
+                        <div class="tab" data-tab="projects">
+                            <i class="fas fa-folder"></i> <span data-i18n="admin-projects">Projects</span>
+                        </div>
+                        <div class="tab" data-tab="blogs">
+                            <i class="fas fa-blog"></i> <span data-i18n="admin-blogs">Blogs</span>
+                        </div>
+                        <div class="tab" data-tab="skills">
+                            <i class="fas fa-certificate"></i> <span data-i18n="admin-skills">Skills & Certifications</span>
+                        </div>
+                        <div class="tab" data-tab="users">
+                            <i class="fas fa-users"></i> <span data-i18n="admin-users">Users</span>
+                        </div>
+                        <div class="tab" data-tab="security">
+                            <i class="fas fa-shield-alt"></i> <span data-i18n="admin-security">Security</span>
+                        </div>
+                        <div class="tab" data-tab="activity">
+                            <i class="fas fa-history"></i> <span data-i18n="admin-activity">Activity Log</span>
+                        </div>
+                    </div>
+
+                    <div class="admin-content">
+                        <!-- Dashboard Tab Content -->
+                        <div class="tab-content active" id="dashboard-tab">
+                            <div class="dashboard-cards">
+                                <div class="dashboard-card">
+                                    <div class="dashboard-card-header">
+                                        <h3 class="dashboard-card-title">Total Visitors</h3>
+                                        <div class="dashboard-card-icon blue">
+                                            <i class="fas fa-users"></i>
+                                        </div>
+                                    </div>
+                                    <div class="dashboard-card-value" data-number="45281">45,281</div>
+                                    <div class="dashboard-card-change positive">
+                                        <i class="fas fa-arrow-up"></i> 12.5% from last month
+                                    </div>
+                                </div>
+
+                                <div class="dashboard-card">
+                                    <div class="dashboard-card-header">
+                                        <h3 class="dashboard-card-title">Project Views</h3>
+                                        <div class="dashboard-card-icon green">
+                                            <i class="fas fa-eye"></i>
+                                        </div>
+                                    </div>
+                                    <div class="dashboard-card-value" data-number="28459">28,459</div>
+                                    <div class="dashboard-card-change positive">
+                                        <i class="fas fa-arrow-up"></i> 8.3% from last month
+                                    </div>
+                                </div>
+
+                                <div class="dashboard-card">
+                                    <div class="dashboard-card-header">
+                                        <h3 class="dashboard-card-title">Contact Requests</h3>
+                                        <div class="dashboard-card-icon purple">
+                                            <i class="fas fa-envelope"></i>
+                                        </div>
+                                    </div>
+                                    <div class="dashboard-card-value">342</div>
+                                    <div class="dashboard-card-change positive">
+                                        <i class="fas fa-arrow-up"></i> 5.2% from last month
+                                    </div>
+                                </div>
+
+                                <div class="dashboard-card">
+                                    <div class="dashboard-card-header">
+                                        <h3 class="dashboard-card-title">Avg. Time on Site</h3>
+                                        <div class="dashboard-card-icon orange">
+                                            <i class="fas fa-clock"></i>
+                                        </div>
+                                    </div>
+                                    <div class="dashboard-card-value">3:42</div>
+                                    <div class="dashboard-card-change negative">
+                                        <i class="fas fa-arrow-down"></i> 1.8% from last month
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="chart-container visitors-chart">
+                                <div class="chart-header">
+                                    <h3 class="chart-title">Visitors Over Time</h3>
+                                    <div class="chart-actions">
+                                        <div class="chart-period-selector">
+                                            <button class="active">Week</button>
+                                            <button>Month</button>
+                                            <button>Year</button>
+                                        </div>
+                                        <button class="btn secondary-btn export-btn" data-format="pdf" data-type="visitors">
+                                            <i class="fas fa-download"></i> Export
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="chart-canvas-container">
+                                    <canvas id="visitorsChart"></canvas>
+                                </div>
+                            </div>
+
+                            <div class="dashboard-row">
+                                <div class="chart-container engagement-chart">
+                                    <div class="chart-header">
+                                        <h3 class="chart-title">Engagement Metrics</h3>
+                                        <button class="btn secondary-btn export-btn" data-format="csv" data-type="engagement">
+                                            <i class="fas fa-download"></i> Export
+                                        </button>
+                                    </div>
+                                    <div class="chart-canvas-container">
+                                        <canvas id="engagementChart"></canvas>
+                                    </div>
+                                </div>
+
+                                <div class="chart-container devices-chart">
+                                    <div class="chart-header">
+                                        <h3 class="chart-title">Devices</h3>
+                                        <button class="btn secondary-btn export-btn" data-format="csv" data-type="devices">
+                                            <i class="fas fa-download"></i> Export
+                                        </button>
+                                    </div>
+                                    <div class="chart-canvas-container">
+                                        <canvas id="devicesChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="chart-container countries-chart">
+                                <div class="chart-header">
+                                    <h3 class="chart-title">Top Countries</h3>
+                                    <button class="btn secondary-btn export-btn" data-format="csv" data-type="countries">
+                                        <i class="fas fa-download"></i> Export
+                                    </button>
+                                </div>
+                                <div class="chart-canvas-container">
+                                    <canvas id="countriesChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Projects Tab Content -->
+                        <div class="tab-content" id="projects-tab">
+                            <div class="projects-toolbar">
+                                <div class="search-container">
+                                    <i class="fas fa-search search-icon"></i>
+                                    <input type="text" id="projectSearch" placeholder="Search projects..." data-i18n="admin-search" data-i18n-attr="placeholder">
+                                </div>
+                                <div class="filter-container">
+                                    <select id="categoryFilter">
+                                        <option value="all">All Categories</option>
+                                        <option value="web" data-i18n="admin-category-web">Web Development</option>
+                                        <option value="design" data-i18n="admin-category-design">Design</option>
+                                        <option value="ui" data-i18n="admin-category-ui">UI/UX Design</option>
+                                        <option value="mobile" data-i18n="admin-category-mobile">Mobile Apps</option>
+                                    </select>
+                                </div>
+                                <div class="sort-container">
+                                    <select id="sortFilter">
+                                        <option value="newest" data-i18n="admin-sort-newest">Newest First</option>
+                                        <option value="oldest" data-i18n="admin-sort-oldest">Oldest First</option>
+                                        <option value="name-asc" data-i18n="admin-sort-name-asc">Name (A-Z)</option>
+                                        <option value="name-desc" data-i18n="admin-sort-name-desc">Name (Z-A)</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="projects-list-header">
+                                <div class="project-name-header">Name</div>
+                                <div class="project-category-header">Category</div>
+                                <div class="project-date-header">Date Added</div>
+                                <div class="project-actions-header">Actions</div>
+                            </div>
+
+                            <div class="projects-list" id="adminProjectsList">
+                                <!-- Projects will be loaded dynamically with JavaScript -->
+                                <div class="empty-state" id="emptyState">
+                                    <div class="empty-icon">
+                                        <i class="fas fa-folder-open"></i>
+                                    </div>
+                                    <h3 data-i18n="admin-no-projects">No projects found</h3>
+                                    <p>Start by adding your first project using the "Add Project" button above.</p>
+                                    <button id="empty-add-btn" class="btn primary-btn">
+                                        <i class="fas fa-plus"></i> <span data-i18n="admin-add-project">Add Project</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Blogs Tab Content -->
+                        <div class="tab-content" id="blogs-tab">
+                            <div class="dashboard-header">
+                                <div class="dashboard-title">
+                                    <h2 data-i18n="admin-blogs-management">Blog Management</h2>
+                                    <span class="blog-count" id="blogCount">3 blogs</span>
+                                </div>
+                                <div class="dashboard-actions">
+                                    <button id="addBlogBtn" class="btn primary-btn">
+                                        <i class="fas fa-plus"></i> <span data-i18n="admin-add-blog">Add Blog</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="projects-toolbar">
+                                <div class="search-container">
+                                    <i class="fas fa-search search-icon"></i>
+                                    <input type="text" id="blogSearch" placeholder="Search blogs..." data-i18n="admin-search-blogs" data-i18n-attr="placeholder">
+                                </div>
+                                <div class="filter-container">
+                                    <select id="blogCategoryFilter">
+                                        <option value="all">All Categories</option>
+                                        <option value="web-development" data-i18n="admin-category-web-dev">Web Development</option>
+                                        <option value="ui-ux" data-i18n="admin-category-ui-ux">UI/UX Design</option>
+                                        <option value="javascript" data-i18n="admin-category-javascript">JavaScript</option>
+                                        <option value="css" data-i18n="admin-category-css">CSS</option>
+                                        <option value="tutorials" data-i18n="admin-category-tutorials">Tutorials</option>
+                                    </select>
+                                </div>
+                                <div class="sort-container">
+                                    <select id="blogSortFilter">
+                                        <option value="newest" data-i18n="admin-sort-newest">Newest First</option>
+                                        <option value="oldest" data-i18n="admin-sort-oldest">Oldest First</option>
+                                        <option value="title-asc" data-i18n="admin-sort-title-asc">Title (A-Z)</option>
+                                        <option value="title-desc" data-i18n="admin-sort-title-desc">Title (Z-A)</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="projects-list-header">
+                                <div class="project-name-header" data-i18n="admin-blog-title">Title</div>
+                                <div class="project-category-header" data-i18n="admin-blog-category">Category</div>
+                                <div class="project-date-header" data-i18n="admin-blog-date">Date Published</div>
+                                <div class="project-actions-header" data-i18n="admin-blog-actions">Actions</div>
+                            </div>
+
+                            <div class="projects-list" id="adminBlogsList">
+                                <!-- Sample blog posts -->
+                                <div class="project-item">
+                                    <div class="project-name">
+                                        <h3>Essential Modern JavaScript Features Every Developer Should Know</h3>
+                                    </div>
+                                    <div class="project-category">
+                                        <span class="category-badge javascript">JavaScript</span>
+                                    </div>
+                                    <div class="project-date" data-date="2023-10-15">2023-10-15</div>
+                                    <div class="project-actions">
+                                        <button class="action-btn edit-blog-btn" data-id="1" title="Edit">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="action-btn delete-blog-btn" data-id="1" data-title="Essential Modern JavaScript Features Every Developer Should Know" title="Delete">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="project-item">
+                                    <div class="project-name">
+                                        <h3>CSS Grid vs Flexbox: When to Use Each Layout System</h3>
+                                    </div>
+                                    <div class="project-category">
+                                        <span class="category-badge css">CSS</span>
+                                    </div>
+                                    <div class="project-date" data-date="2023-09-28">2023-09-28</div>
+                                    <div class="project-actions">
+                                        <button class="action-btn edit-blog-btn" data-id="2" title="Edit">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="action-btn delete-blog-btn" data-id="2" data-title="CSS Grid vs Flexbox: When to Use Each Layout System" title="Delete">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="project-item">
+                                    <div class="project-name">
+                                        <h3>A Comprehensive Guide to React Hooks</h3>
+                                    </div>
+                                    <div class="project-category">
+                                        <span class="category-badge javascript">JavaScript</span>
+                                    </div>
+                                    <div class="project-date" data-date="2023-08-12">2023-08-12</div>
+                                    <div class="project-actions">
+                                        <button class="action-btn edit-blog-btn" data-id="3" title="Edit">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="action-btn delete-blog-btn" data-id="3" data-title="A Comprehensive Guide to React Hooks" title="Delete">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Users Tab Content -->
+                        <div class="tab-content" id="users-tab">
+                            <div class="dashboard-header">
+                                <div class="dashboard-title">
+                                    <h2 data-i18n="admin-users-management">User Management</h2>
+                                    <span class="user-count" id="userCount">3 users</span>
+                                </div>
+                                <div class="dashboard-actions">
+                                    <button id="addUserBtn" class="btn primary-btn">
+                                        <i class="fas fa-plus"></i> <span data-i18n="admin-add-user">Add User</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="users-list">
+                                <div class="users-list-header">
+                                    <div>User</div>
+                                    <div>Role</div>
+                                    <div>Last Login</div>
+                                    <div>Actions</div>
+                                </div>
+
+                                <div class="user-item">
+                                    <div class="user-name">
+                                        <div class="user-avatar">A</div>
+                                        <div>
+                                            <div>Abdullah</div>
+                                            <div>abdellahweb@gmail.com</div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <span class="user-role admin">Admin</span>
+                                    </div>
+                                    <div>2023-05-18 10:30 AM</div>
+                                    <div class="user-actions">
+                                        <button class="action-btn edit-user-btn" data-id="1" title="Edit">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="user-item">
+                                    <div class="user-name">
+                                        <div class="user-avatar">M</div>
+                                        <div>
+                                            <div>Mohammed</div>
+                                            <div>mohammed@example.com</div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <span class="user-role editor">Editor</span>
+                                    </div>
+                                    <div>2023-05-17 02:15 PM</div>
+                                    <div class="user-actions">
+                                        <button class="action-btn edit-user-btn" data-id="2" title="Edit">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="action-btn delete-user-btn" data-id="2" data-name="Mohammed" title="Delete">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="user-item">
+                                    <div class="user-name">
+                                        <div class="user-avatar">S</div>
+                                        <div>
+                                            <div>Sara</div>
+                                            <div>sara@example.com</div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <span class="user-role viewer">Viewer</span>
+                                    </div>
+                                    <div>2023-05-16 09:45 AM</div>
+                                    <div class="user-actions">
+                                        <button class="action-btn edit-user-btn" data-id="3" title="Edit">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="action-btn delete-user-btn" data-id="3" data-name="Sara" title="Delete">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Security Tab Content -->
+                        <div class="tab-content" id="security-tab">
+                            <div class="dashboard-header">
+                                <div class="dashboard-title">
+                                    <h2 data-i18n="admin-security-settings">Security Settings</h2>
+                                </div>
+                            </div>
+
+                            <div class="security-settings">
+                                <div class="security-option">
+                                    <div class="security-option-info">
+                                        <h4>Two-Factor Authentication (2FA)</h4>
+                                        <p>Require a verification code in addition to your password when signing in</p>
+                                    </div>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" data-setting="2fa">
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                </div>
+
+                                <div class="security-option">
+                                    <div class="security-option-info">
+                                        <h4>CAPTCHA Protection</h4>
+                                        <p>Protect login form from automated attacks with CAPTCHA verification</p>
+                                    </div>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" data-setting="captcha" checked>
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                </div>
+
+                                <div class="security-option">
+                                    <div class="security-option-info">
+                                        <h4>Auto Logout</h4>
+                                        <p>Automatically log out after 30 minutes of inactivity</p>
+                                    </div>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" data-setting="auto-logout" checked>
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                </div>
+
+                                <div class="security-option">
+                                    <div class="security-option-info">
+                                        <h4>Login Attempt Monitoring</h4>
+                                        <p>Monitor and alert on suspicious login attempts</p>
+                                    </div>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" data-setting="login-monitoring" checked>
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                </div>
+
+                                <div class="security-option">
+                                    <div class="security-option-info">
+                                        <h4>Strong Password Policy</h4>
+                                        <p>Require complex passwords with minimum length and special characters</p>
+                                    </div>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" data-setting="password-policy" checked>
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                </div>
+
+                                <div class="security-option">
+                                    <div class="security-option-info">
+                                        <h4>Password Expiration</h4>
+                                        <p>Require password change every 90 days</p>
+                                    </div>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" data-setting="password-expiration">
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Skills & Certifications Tab Content -->
+                        <div class="tab-content" id="skills-tab">
+                            <div class="dashboard-header">
+                                <div class="dashboard-title">
+                                    <h2 data-i18n="admin-skills-management">Skills & Certifications Management</h2>
+                                </div>
+                            </div>
+
+                            <!-- Skills Section -->
+                            <div class="skills-section">
+                                <div class="section-header-with-actions">
+                                    <h3 data-i18n="admin-technical-skills">Technical Skills</h3>
+                                    <button id="addSkillBtn" class="btn primary-btn">
+                                        <i class="fas fa-plus"></i> <span data-i18n="admin-add-skill">Add Skill</span>
+                                    </button>
+                                </div>
+
+                                <div class="skills-categories-admin">
+                                    <!-- Frontend Skills -->
+                                    <div class="skills-category-admin">
+                                        <div class="category-header">
+                                            <h4 data-i18n="frontend-category">Frontend</h4>
+                                        </div>
+                                        <div class="skills-list" id="frontendSkillsList">
+                                            <!-- Skills will be loaded dynamically -->
+                                            <div class="empty-state" id="frontendEmptyState">
+                                                <div class="empty-icon">
+                                                    <i class="fas fa-code"></i>
+                                                </div>
+                                                <p data-i18n="admin-no-skills">No skills found in this category</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Backend Skills -->
+                                    <div class="skills-category-admin">
+                                        <div class="category-header">
+                                            <h4 data-i18n="backend-category">Backend</h4>
+                                        </div>
+                                        <div class="skills-list" id="backendSkillsList">
+                                            <!-- Skills will be loaded dynamically -->
+                                            <div class="empty-state" id="backendEmptyState">
+                                                <div class="empty-icon">
+                                                    <i class="fas fa-server"></i>
+                                                </div>
+                                                <p data-i18n="admin-no-skills">No skills found in this category</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Database Skills -->
+                                    <div class="skills-category-admin">
+                                        <div class="category-header">
+                                            <h4 data-i18n="database-category">Databases</h4>
+                                        </div>
+                                        <div class="skills-list" id="databaseSkillsList">
+                                            <!-- Skills will be loaded dynamically -->
+                                            <div class="empty-state" id="databaseEmptyState">
+                                                <div class="empty-icon">
+                                                    <i class="fas fa-database"></i>
+                                                </div>
+                                                <p data-i18n="admin-no-skills">No skills found in this category</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Tools & DevOps Skills -->
+                                    <div class="skills-category-admin">
+                                        <div class="category-header">
+                                            <h4 data-i18n="tools-category">Tools & DevOps</h4>
+                                        </div>
+                                        <div class="skills-list" id="toolsSkillsList">
+                                            <!-- Skills will be loaded dynamically -->
+                                            <div class="empty-state" id="toolsEmptyState">
+                                                <div class="empty-icon">
+                                                    <i class="fas fa-tools"></i>
+                                                </div>
+                                                <p data-i18n="admin-no-skills">No skills found in this category</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Certifications Section -->
+                            <div class="certifications-section">
+                                <div class="section-header-with-actions">
+                                    <h3 data-i18n="admin-professional-certifications">Professional Certifications</h3>
+                                    <button id="addCertificationBtn" class="btn primary-btn">
+                                        <i class="fas fa-plus"></i> <span data-i18n="admin-add-certification">Add Certification</span>
+                                    </button>
+                                </div>
+
+                                <div class="certifications-list" id="certificationsListAdmin">
+                                    <!-- Certifications will be loaded dynamically -->
+                                    <div class="empty-state" id="certificationsEmptyState">
+                                        <div class="empty-icon">
+                                            <i class="fas fa-certificate"></i>
+                                        </div>
+                                        <p data-i18n="admin-no-certifications">No certifications found</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Activity Log Tab Content -->
+                        <div class="tab-content" id="activity-tab">
+                            <div class="dashboard-header">
+                                <div class="dashboard-title">
+                                    <h2 data-i18n="admin-activity-log">Activity Log</h2>
+                                </div>
+                                <div class="dashboard-actions">
+                                    <button id="clearLogBtn" class="btn secondary-btn">
+                                        <i class="fas fa-trash"></i> <span data-i18n="admin-clear-log">Clear Log</span>
+                                    </button>
+                                    <button class="btn secondary-btn export-btn" data-format="csv" data-type="activity">
+                                        <i class="fas fa-download"></i> <span data-i18n="admin-export">Export</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="recent-activity">
+                                <ul class="activity-list">
+                                    <li class="activity-item">
+                                        <div class="activity-icon blue">
+                                            <i class="fas fa-user"></i>
+                                        </div>
+                                        <div class="activity-content">
+                                            <p class="activity-text"><strong>Abdullah</strong> logged in to the admin panel</p>
+                                            <p class="activity-time">Today, 10:30 AM</p>
+                                        </div>
+                                    </li>
+                                    <li class="activity-item">
+                                        <div class="activity-icon green">
+                                            <i class="fas fa-plus"></i>
+                                        </div>
+                                        <div class="activity-content">
+                                            <p class="activity-text"><strong>Abdullah</strong> added a new project: <strong>To-Do List Application</strong></p>
+                                            <p class="activity-time">Today, 09:45 AM</p>
+                                        </div>
+                                    </li>
+                                    <li class="activity-item">
+                                        <div class="activity-icon yellow">
+                                            <i class="fas fa-edit"></i>
+                                        </div>
+                                        <div class="activity-content">
+                                            <p class="activity-text"><strong>Mohammed</strong> edited project: <strong>Text Editor Tool</strong></p>
+                                            <p class="activity-time">Yesterday, 03:20 PM</p>
+                                        </div>
+                                    </li>
+                                    <li class="activity-item">
+                                        <div class="activity-icon red">
+                                            <i class="fas fa-trash"></i>
+                                        </div>
+                                        <div class="activity-content">
+                                            <p class="activity-text"><strong>Mohammed</strong> deleted project: <strong>Weather App</strong></p>
+                                            <p class="activity-time">Yesterday, 02:15 PM</p>
+                                        </div>
+                                    </li>
+                                    <li class="activity-item">
+                                        <div class="activity-icon blue">
+                                            <i class="fas fa-user-plus"></i>
+                                        </div>
+                                        <div class="activity-content">
+                                            <p class="activity-text"><strong>Abdullah</strong> added a new user: <strong>Sara</strong></p>
+                                            <p class="activity-time">2023-05-16, 09:30 AM</p>
+                                        </div>
+                                    </li>
+                                    <li class="activity-item">
+                                        <div class="activity-icon blue">
+                                            <i class="fas fa-shield-alt"></i>
+                                        </div>
+                                        <div class="activity-content">
+                                            <p class="activity-text"><strong>Abdullah</strong> updated security settings</p>
+                                            <p class="activity-time">2023-05-15, 11:45 AM</p>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Project Form Modal -->
+                    <div class="modal" id="projectFormModal">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h3 id="modalTitle" data-i18n="admin-add-project">Add Project</h3>
+                                <button class="modal-close" id="closeModal">&times;</button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="projectForm">
+                                    <input type="hidden" id="projectId" name="projectId">
+
+                                    <div class="form-group">
+                                        <label for="projectTitle">
+                                            <span data-i18n="admin-project-title">Project Title</span>
+                                            <span class="required-badge" data-i18n="admin-required">Required</span>
+                                        </label>
+                                        <input type="text" id="projectTitle" name="projectTitle" required>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="projectDescription">
+                                            <span data-i18n="admin-project-description">Project Description</span>
+                                            <span class="required-badge" data-i18n="admin-required">Required</span>
+                                        </label>
+                                        <textarea id="projectDescription" name="projectDescription" rows="4" required></textarea>
+                                    </div>
+
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label for="projectCategory">
+                                                <span data-i18n="admin-project-category">Category</span>
+                                                <span class="required-badge" data-i18n="admin-required">Required</span>
+                                            </label>
+                                            <select id="projectCategory" name="projectCategory" required>
+                                                <option value="" data-i18n="admin-select-category">Select a category</option>
+                                                <option value="web" data-i18n="admin-category-web">Web Development</option>
+                                                <option value="design" data-i18n="admin-category-design">Design</option>
+                                                <option value="ui" data-i18n="admin-category-ui">UI/UX Design</option>
+                                                <option value="mobile" data-i18n="admin-category-mobile">Mobile Apps</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="projectTags">
+                                                <span data-i18n="admin-project-tags">Tags (comma separated)</span>
+                                                <span class="required-badge" data-i18n="admin-required">Required</span>
+                                            </label>
+                                            <input type="text" id="projectTags" name="projectTags" placeholder="HTML, CSS, JavaScript" required>
+                                        </div>
+                                    </div>
+
+
+
+                                    <div class="form-group">
+                                        <label for="projectFeatures">
+                                            <span data-i18n="admin-project-features">Features (one per line)</span>
+                                            <span class="optional-badge" data-i18n="admin-optional">Optional</span>
+                                        </label>
+                                        <textarea id="projectFeatures" name="projectFeatures" rows="4" placeholder="- Responsive design for all devices
+- User authentication
+- Shopping cart functionality"></textarea>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="projectTechnologies">
+                                            <span data-i18n="admin-project-technologies">Technologies (comma separated)</span>
+                                            <span class="optional-badge" data-i18n="admin-optional">Optional</span>
+                                        </label>
+                                        <input type="text" id="projectTechnologies" name="projectTechnologies" placeholder="React.js, Node.js, MongoDB">
+                                    </div>
+
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label for="projectLiveLink">
+                                                <span data-i18n="admin-project-live-link">Live Demo URL</span>
+                                                <span class="optional-badge" data-i18n="admin-optional">Optional</span>
+                                            </label>
+                                            <input type="url" id="projectLiveLink" name="projectLiveLink" placeholder="https://example.com">
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="projectGithubLink">
+                                                <span data-i18n="admin-project-github-link">GitHub Repository URL</span>
+                                                <span class="optional-badge" data-i18n="admin-optional">Optional</span>
+                                            </label>
+                                            <input type="url" id="projectGithubLink" name="projectGithubLink" placeholder="https://github.com/username/repo">
+                                        </div>
+                                    </div>
+
+                                    <div class="form-actions">
+                                        <button type="button" id="cancelBtn" class="btn secondary-btn" data-i18n="admin-cancel">Cancel</button>
+                                        <button type="submit" id="saveBtn" class="btn primary-btn" data-i18n="admin-save">Save</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Delete Confirmation Modal -->
+                    <div class="modal" id="deleteModal">
+                        <div class="modal-content delete-modal">
+                            <div class="modal-header">
+                                <h3>Confirm Delete</h3>
+                                <button class="modal-close" id="closeDeleteModal">&times;</button>
+                            </div>
+                            <div class="modal-body">
+                                <p data-i18n="admin-confirm-delete">Are you sure you want to delete this project?</p>
+                                <h4 id="deleteProjectTitle"></h4>
+                                <div class="form-actions">
+                                    <button type="button" id="cancelDeleteBtn" class="btn secondary-btn" data-i18n="admin-cancel">Cancel</button>
+                                    <button type="button" id="confirmDeleteBtn" class="btn danger-btn" data-i18n="admin-delete">Delete</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- User Form Modal -->
+                    <div class="modal" id="userFormModal">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h3 id="userModalTitle" data-i18n="admin-add-user">Add User</h3>
+                                <button class="modal-close" id="closeUserModal">&times;</button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="userForm">
+                                    <input type="hidden" id="userId" name="userId">
+
+                                    <div class="form-group">
+                                        <label for="userName">
+                                            <span data-i18n="admin-user-name">Full Name</span>
+                                            <span class="required-badge" data-i18n="admin-required">Required</span>
+                                        </label>
+                                        <input type="text" id="userName" name="userName" required>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="userEmail">
+                                            <span data-i18n="admin-user-email">Email</span>
+                                            <span class="required-badge" data-i18n="admin-required">Required</span>
+                                        </label>
+                                        <input type="email" id="userEmail" name="userEmail" required>
+                                    </div>
+
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label for="userRole">
+                                                <span data-i18n="admin-user-role">Role</span>
+                                                <span class="required-badge" data-i18n="admin-required">Required</span>
+                                            </label>
+                                            <select id="userRole" name="userRole" required>
+                                                <option value="" data-i18n="admin-select-role">Select a role</option>
+                                                <option value="admin" data-i18n="admin-role-admin">Admin</option>
+                                                <option value="editor" data-i18n="admin-role-editor">Editor</option>
+                                                <option value="viewer" data-i18n="admin-role-viewer">Viewer</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="userStatus">
+                                                <span data-i18n="admin-user-status">Status</span>
+                                                <span class="required-badge" data-i18n="admin-required">Required</span>
+                                            </label>
+                                            <select id="userStatus" name="userStatus" required>
+                                                <option value="active" data-i18n="admin-status-active">Active</option>
+                                                <option value="inactive" data-i18n="admin-status-inactive">Inactive</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="userPassword">
+                                            <span data-i18n="admin-user-password">Password</span>
+                                            <span class="required-badge new-user-field" data-i18n="admin-required">Required</span>
+                                            <span class="optional-badge edit-user-field" data-i18n="admin-optional">Optional</span>
+                                        </label>
+                                        <input type="password" id="userPassword" name="userPassword">
+                                        <p class="form-hint edit-user-field">Leave blank to keep current password</p>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="userPermissions">
+                                            <span data-i18n="admin-user-permissions">Permissions</span>
+                                            <span class="optional-badge" data-i18n="admin-optional">Optional</span>
+                                        </label>
+                                        <div class="permissions-grid">
+                                            <div class="permission-item">
+                                                <input type="checkbox" id="perm_dashboard" name="permissions[]" value="dashboard">
+                                                <label for="perm_dashboard">Dashboard</label>
+                                            </div>
+                                            <div class="permission-item">
+                                                <input type="checkbox" id="perm_projects_view" name="permissions[]" value="projects_view">
+                                                <label for="perm_projects_view">View Projects</label>
+                                            </div>
+                                            <div class="permission-item">
+                                                <input type="checkbox" id="perm_projects_edit" name="permissions[]" value="projects_edit">
+                                                <label for="perm_projects_edit">Edit Projects</label>
+                                            </div>
+                                            <div class="permission-item">
+                                                <input type="checkbox" id="perm_projects_delete" name="permissions[]" value="projects_delete">
+                                                <label for="perm_projects_delete">Delete Projects</label>
+                                            </div>
+                                            <div class="permission-item">
+                                                <input type="checkbox" id="perm_users_view" name="permissions[]" value="users_view">
+                                                <label for="perm_users_view">View Users</label>
+                                            </div>
+                                            <div class="permission-item">
+                                                <input type="checkbox" id="perm_users_edit" name="permissions[]" value="users_edit">
+                                                <label for="perm_users_edit">Edit Users</label>
+                                            </div>
+                                            <div class="permission-item">
+                                                <input type="checkbox" id="perm_security" name="permissions[]" value="security">
+                                                <label for="perm_security">Security Settings</label>
+                                            </div>
+                                            <div class="permission-item">
+                                                <input type="checkbox" id="perm_activity" name="permissions[]" value="activity">
+                                                <label for="perm_activity">Activity Log</label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-actions">
+                                        <button type="button" id="cancelUserBtn" class="btn secondary-btn" data-i18n="admin-cancel">Cancel</button>
+                                        <button type="submit" id="saveUserBtn" class="btn primary-btn" data-i18n="admin-save">Save</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Delete User Confirmation Modal -->
+                    <div class="modal" id="deleteUserModal">
+                        <div class="modal-content delete-modal">
+                            <div class="modal-header">
+                                <h3>Confirm Delete User</h3>
+                                <button class="modal-close" id="closeDeleteUserModal">&times;</button>
+                            </div>
+                            <div class="modal-body">
+                                <p data-i18n="admin-confirm-delete-user">Are you sure you want to delete this user?</p>
+                                <h4 id="deleteUserName"></h4>
+                                <div class="form-actions">
+                                    <button type="button" id="cancelDeleteUserBtn" class="btn secondary-btn" data-i18n="admin-cancel">Cancel</button>
+                                    <button type="button" id="confirmDeleteUserBtn" class="btn danger-btn" data-i18n="admin-delete">Delete</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Blog Form Modal -->
+                    <div class="modal" id="blogFormModal">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h3 id="blogModalTitle" data-i18n="admin-add-blog">Add Blog</h3>
+                                <button class="modal-close" id="closeBlogModal">&times;</button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="blogForm">
+                                    <input type="hidden" id="blogId" name="blogId">
+
+                                    <div class="blog-form-group">
+                                        <label for="blogTitle">
+                                            <span data-i18n="admin-blog-title-label">Blog Title</span>
+                                            <span class="required-badge" data-i18n="admin-required">Required</span>
+                                        </label>
+                                        <input type="text" id="blogTitle" name="blogTitle" required>
+                                    </div>
+
+                                    <div class="blog-form-row">
+                                        <div class="blog-form-group">
+                                            <label for="blogCategory">
+                                                <span data-i18n="admin-blog-category-label">Category</span>
+                                                <span class="required-badge" data-i18n="admin-required">Required</span>
+                                            </label>
+                                            <select id="blogCategory" name="blogCategory" required>
+                                                <option value="" data-i18n="admin-select-category">Select a category</option>
+                                                <option value="web-development" data-i18n="admin-category-web-dev">Web Development</option>
+                                                <option value="ui-ux" data-i18n="admin-category-ui-ux">UI/UX Design</option>
+                                                <option value="javascript" data-i18n="admin-category-javascript">JavaScript</option>
+                                                <option value="css" data-i18n="admin-category-css">CSS</option>
+                                                <option value="tutorials" data-i18n="admin-category-tutorials">Tutorials</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="blog-form-group">
+                                            <label for="blogDate">
+                                                <span data-i18n="admin-blog-date-label">Publication Date</span>
+                                                <span class="required-badge" data-i18n="admin-required">Required</span>
+                                            </label>
+                                            <input type="date" id="blogDate" name="blogDate" required>
+                                        </div>
+                                    </div>
+
+                                    <div class="blog-form-group">
+                                        <label for="blogExcerpt">
+                                            <span data-i18n="admin-blog-excerpt-label">Excerpt</span>
+                                            <span class="required-badge" data-i18n="admin-required">Required</span>
+                                        </label>
+                                        <textarea id="blogExcerpt" name="blogExcerpt" rows="3" required></textarea>
+                                        <p class="blog-form-hint" data-i18n="admin-blog-excerpt-hint">A short summary of the blog post (max 150 characters)</p>
+                                    </div>
+
+                                    <div class="blog-form-group">
+                                        <label for="blogContent">
+                                            <span data-i18n="admin-blog-content-label">Content</span>
+                                            <span class="required-badge" data-i18n="admin-required">Required</span>
+                                        </label>
+                                        <textarea id="blogContent" name="blogContent" rows="10" required></textarea>
+                                        <p class="blog-form-hint" data-i18n="admin-blog-content-hint">Supports Markdown formatting</p>
+                                    </div>
+
+                                    <div class="blog-form-group">
+                                        <label for="blogTags">
+                                            <span data-i18n="admin-blog-tags-label">Tags (comma separated)</span>
+                                            <span class="optional-badge" data-i18n="admin-optional">Optional</span>
+                                        </label>
+                                        <input type="text" id="blogTags" name="blogTags" placeholder="javascript, web development, tutorial">
+                                    </div>
+
+                                    <div class="form-actions">
+                                        <button type="button" id="cancelBlogBtn" class="btn secondary-btn" data-i18n="admin-cancel">Cancel</button>
+                                        <button type="submit" id="saveBlogBtn" class="btn primary-btn" data-i18n="admin-save">Save</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Delete Blog Confirmation Modal -->
+                    <div class="modal" id="deleteBlogModal">
+                        <div class="modal-content delete-modal">
+                            <div class="modal-header">
+                                <h3 data-i18n="admin-confirm-delete-blog-title">Confirm Delete Blog</h3>
+                                <button class="modal-close" id="closeDeleteBlogModal">&times;</button>
+                            </div>
+                            <div class="modal-body">
+                                <p data-i18n="admin-confirm-delete-blog">Are you sure you want to delete this blog post?</p>
+                                <h4 id="deleteBlogTitle"></h4>
+                                <div class="form-actions">
+                                    <button type="button" id="cancelDeleteBlogBtn" class="btn secondary-btn" data-i18n="admin-cancel">Cancel</button>
+                                    <button type="button" id="confirmDeleteBlogBtn" class="btn danger-btn" data-i18n="admin-delete">Delete</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Skill Form Modal -->
+                    <div class="modal" id="skillFormModal">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h3 id="skillModalTitle" data-i18n="admin-add-skill">Add Skill</h3>
+                                <button class="modal-close" id="closeSkillModal">&times;</button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="skillForm">
+                                    <input type="hidden" id="skillId" name="skillId">
+
+                                    <div class="form-group">
+                                        <label for="skillName">
+                                            <span data-i18n="admin-skill-name">Skill Name</span>
+                                            <span class="required-badge" data-i18n="admin-required">Required</span>
+                                        </label>
+                                        <input type="text" id="skillName" name="skillName" required>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="skillCategory">
+                                            <span data-i18n="admin-skill-category">Category</span>
+                                            <span class="required-badge" data-i18n="admin-required">Required</span>
+                                        </label>
+                                        <select id="skillCategory" name="skillCategory" required>
+                                            <option value="" data-i18n="admin-select-category">Select a category</option>
+                                            <option value="frontend" data-i18n="frontend-category">Frontend</option>
+                                            <option value="backend" data-i18n="backend-category">Backend</option>
+                                            <option value="database" data-i18n="database-category">Databases</option>
+                                            <option value="tools" data-i18n="tools-category">Tools & DevOps</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="skillLevel">
+                                            <span data-i18n="admin-skill-level">Skill Level (%)</span>
+                                            <span class="required-badge" data-i18n="admin-required">Required</span>
+                                        </label>
+                                        <div class="range-input-container">
+                                            <input type="range" id="skillLevelRange" min="0" max="100" value="75" step="5">
+                                            <input type="number" id="skillLevel" name="skillLevel" min="0" max="100" value="75" required>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="skillDescription">
+                                            <span data-i18n="admin-skill-description">Description</span>
+                                            <span class="optional-badge" data-i18n="admin-optional">Optional</span>
+                                        </label>
+                                        <textarea id="skillDescription" name="skillDescription" rows="3"></textarea>
+                                    </div>
+
+                                    <div class="form-actions">
+                                        <button type="button" id="cancelSkillBtn" class="btn secondary-btn" data-i18n="admin-cancel">Cancel</button>
+                                        <button type="submit" id="saveSkillBtn" class="btn primary-btn" data-i18n="admin-save">Save</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Delete Skill Confirmation Modal -->
+                    <div class="modal" id="deleteSkillModal">
+                        <div class="modal-content delete-modal">
+                            <div class="modal-header">
+                                <h3 data-i18n="admin-confirm-delete-skill-title">Confirm Delete Skill</h3>
+                                <button class="modal-close" id="closeDeleteSkillModal">&times;</button>
+                            </div>
+                            <div class="modal-body">
+                                <p data-i18n="admin-confirm-delete-skill">Are you sure you want to delete this skill?</p>
+                                <h4 id="deleteSkillName"></h4>
+                                <div class="form-actions">
+                                    <button type="button" id="cancelDeleteSkillBtn" class="btn secondary-btn" data-i18n="admin-cancel">Cancel</button>
+                                    <button type="button" id="confirmDeleteSkillBtn" class="btn danger-btn" data-i18n="admin-delete">Delete</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Certification Form Modal -->
+                    <div class="modal" id="certificationFormModal">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h3 id="certificationModalTitle" data-i18n="admin-add-certification">Add Certification</h3>
+                                <button class="modal-close" id="closeCertificationModal">&times;</button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="certificationForm">
+                                    <input type="hidden" id="certificationId" name="certificationId">
+
+                                    <div class="form-group">
+                                        <label for="certificationTitle">
+                                            <span data-i18n="admin-certification-title">Certification Title</span>
+                                            <span class="required-badge" data-i18n="admin-required">Required</span>
+                                        </label>
+                                        <input type="text" id="certificationTitle" name="certificationTitle" required>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="certificationIssuer">
+                                            <span data-i18n="admin-certification-issuer">Issuer</span>
+                                            <span class="required-badge" data-i18n="admin-required">Required</span>
+                                        </label>
+                                        <input type="text" id="certificationIssuer" name="certificationIssuer" required>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="certificationDate">
+                                            <span data-i18n="admin-certification-date">Issue Date</span>
+                                            <span class="required-badge" data-i18n="admin-required">Required</span>
+                                        </label>
+                                        <input type="date" id="certificationDate" name="certificationDate" required>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="certificationDescription">
+                                            <span data-i18n="admin-certification-description">Description</span>
+                                            <span class="required-badge" data-i18n="admin-required">Required</span>
+                                        </label>
+                                        <textarea id="certificationDescription" name="certificationDescription" rows="4" required></textarea>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="certificationLink">
+                                            <span data-i18n="admin-certification-link">Credential Link</span>
+                                            <span class="optional-badge" data-i18n="admin-optional">Optional</span>
+                                        </label>
+                                        <input type="url" id="certificationLink" name="certificationLink" placeholder="https://example.com/credential">
+                                    </div>
+
+                                    <div class="form-actions">
+                                        <button type="button" id="cancelCertificationBtn" class="btn secondary-btn" data-i18n="admin-cancel">Cancel</button>
+                                        <button type="submit" id="saveCertificationBtn" class="btn primary-btn" data-i18n="admin-save">Save</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Delete Certification Confirmation Modal -->
+                    <div class="modal" id="deleteCertificationModal">
+                        <div class="modal-content delete-modal">
+                            <div class="modal-header">
+                                <h3 data-i18n="admin-confirm-delete-certification-title">Confirm Delete Certification</h3>
+                                <button class="modal-close" id="closeDeleteCertificationModal">&times;</button>
+                            </div>
+                            <div class="modal-body">
+                                <p data-i18n="admin-confirm-delete-certification">Are you sure you want to delete this certification?</p>
+                                <h4 id="deleteCertificationTitle"></h4>
+                                <div class="form-actions">
+                                    <button type="button" id="cancelDeleteCertificationBtn" class="btn secondary-btn" data-i18n="admin-cancel">Cancel</button>
+                                    <button type="button" id="confirmDeleteCertificationBtn" class="btn danger-btn" data-i18n="admin-delete">Delete</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">
+                <h2>Abdullah<span>.</span></h2>
+                <p data-i18n="footer-title">Web Developer</p>
+            </div>
+            <div class="footer-links">
+                <h3 data-i18n="footer-links">Quick Links</h3>
+                <ul>
+                    <li><a href="index.html" data-i18n="nav-home">Home</a></li>
+                    <li><a href="projects.html" data-i18n="nav-projects">Projects</a></li>
+                    <li><a href="blog.html" data-i18n="nav-blog">Blog</a></li>
+                    <li><a href="contact.html" data-i18n="nav-contact">Contact</a></li>
+                </ul>
+            </div>
+            <div class="footer-contact">
+                <h3 data-i18n="footer-contact">Contact Me</h3>
+                <p><i class="fas fa-envelope"></i> abdellhweb@gmail.com</p>
+                <p><i class="fas fa-map-marker-alt"></i> Morocco</p>
+                <div class="social-links">
+                    <a href="https://www.instagram.com/abde.llahweb/" target="_blank"><i class="fab fa-instagram"></i></a>
+                    <a href="https://www.linkedin.com/in/abdellah-mouhamiti-7628b4331/" target="_blank"><i class="fab fa-linkedin"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 Abdullah. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script src="js/theme.js"></script>
+    <script src="js/language.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/projects-data.js"></script>
+    <script src="js/blog-data.js"></script>
+    <script src="js/security.js"></script>
+    <script src="js/admin-new.js"></script>
+    <script src="js/admin-dashboard.js"></script>
+    <script src="js/blog-admin.js"></script>
+    <script src="js/skills-admin.js"></script>
+    <script src="js/scroll-effects.js"></script>
+    <script src="js/pwa.js"></script>
+</body>
+</html>

@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Abdullah - Web Developer from Morocco. Portfolio showcasing web development projects.">
+    <meta name="keywords" content="web developer, portfolio, Morocco, Abdullah, web design">
+    <meta name="theme-color" content="#4a6cf7">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Abdullah Portfolio">
+    <title>Abdullah | Web Developer</title>
+
+    <!-- PWA Support -->
+    <link rel="manifest" href="/manifest.json">
+    <link rel="apple-touch-icon" href="/assets/icons/icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/icons/icon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/icons/icon-16x16.png">
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/pwa.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Security Headers -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdnjs.cloudflare.com 'unsafe-inline'; style-src 'self' https://fonts.googleapis.com https://cdnjs.cloudflare.com 'unsafe-inline'; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data:; connect-src 'self';">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="SAMEORIGIN">
+    <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="logo">
+                <h1>Abdullah<span>.</span></h1>
+            </div>
+            <div class="nav-links">
+                <ul>
+                    <li><a href="index.html" class="active" data-i18n="nav-home">Home</a></li>
+                    <li><a href="projects.html" data-i18n="nav-projects">Projects</a></li>
+                    <li><a href="blog.html" data-i18n="nav-blog">Blog</a></li>
+                    <li><a href="admin.html" data-i18n="nav-admin">Admin</a></li>
+                    <li><a href="contact.html" data-i18n="nav-contact">Contact</a></li>
+                </ul>
+            </div>
+            <div class="theme-toggle-container">
+                <div class="theme-toggle" id="theme-toggle" role="switch" aria-checked="false" aria-label="Toggle dark mode">
+                    <i class="fas fa-sun"></i>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+            <div class="language-container">
+                <div class="language-toggle" id="language-toggle">EN</div>
+                <div class="language-menu" id="language-menu">
+                    <button data-lang="en">English</button>
+                    <button data-lang="ar">العربية</button>
+                    <button data-lang="es">Español</button>
+                </div>
+            </div>
+            <div class="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="hero-content">
+                <div class="hero-text">
+                    <h1><span data-i18n="hero-greeting">Hi, I'm</span> <span>Abdullah</span></h1>
+                    <h2 data-i18n="hero-title">Web Developer & Graphic Designer</h2>
+                    <p data-i18n="hero-description">A passionate 24-year-old developer from Morocco, specializing in creating beautiful and functional web experiences. With a strong design sense and technical skills, I transform creative ideas into reality through code.</p>
+                    <div class="hero-buttons">
+                        <a href="projects.html" class="btn primary-btn" data-i18n="hero-btn-work">View My Work</a>
+                        <a href="contact.html" class="btn secondary-btn" data-i18n="hero-btn-contact">Contact Me</a>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <section class="about" id="about">
+            <div class="section-header">
+                <h2 data-i18n="about-title">About Me</h2>
+                <div class="underline"></div>
+            </div>
+            <div class="about-content">
+                <div class="about-text">
+                    <h3 data-i18n="about-subtitle">Who am I?</h3>
+                    <p data-i18n="about-text">I'm Abdullah, a 24-year-old Web Developer and Graphic Designer based in Morocco. I combine technical expertise with creative design to build engaging digital experiences.</p>
+
+                    <h3>What I do</h3>
+                    <div class="skills">
+                        <div class="skill">
+                            <i class="fas fa-code"></i>
+                            <h4 data-i18n="skill-web-dev">Web Development</h4>
+                            <p>Creating responsive, user-friendly websites with clean code and modern technologies.</p>
+                        </div>
+                        <div class="skill">
+                            <i class="fas fa-paint-brush"></i>
+                            <h4 data-i18n="skill-ui-design">UI/UX Design</h4>
+                            <p>Designing visually appealing interfaces and user experiences that communicate effectively.</p>
+                        </div>
+                        <div class="skill">
+                            <i class="fas fa-mobile-alt"></i>
+                            <h4 data-i18n="skill-ui-design">Responsive Design</h4>
+                            <p>Building websites that work flawlessly across all devices and screen sizes.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="skills-certifications" id="skills-certifications">
+            <div class="section-header">
+                <h2 data-i18n="skills-cert-title">Skills & Certifications</h2>
+                <div class="underline"></div>
+            </div>
+            <div class="skills-cert-container">
+                <!-- Certifications Showcase -->
+                <div class="certifications">
+                    <h3 data-i18n="cert-subtitle">Professional Certifications</h3>
+                    <div class="cert-cards">
+                        <!-- Certification 1 -->
+                        <div class="cert-item">
+                            <h3>Meta Front-End Developer</h3>
+                            <div class="cert-details">
+                                <div class="issuer">Meta</div>
+                                <div class="date">Issued: June 2023</div>
+                                <p>Professional certification in front-end development covering React, JavaScript, and responsive design principles.</p>
+                                <a href="#" class="cert-link" target="_blank">View Credential</a>
+                            </div>
+                        </div>
+
+                        <!-- Certification 2 -->
+                        <div class="cert-item">
+                            <h3>AWS Certified Developer Associate</h3>
+                            <div class="cert-details">
+                                <div class="issuer">Amazon Web Services</div>
+                                <div class="date">Issued: March 2023</div>
+                                <p>Expertise in developing, deploying, and debugging cloud-based applications using AWS.</p>
+                                <a href="#" class="cert-link" target="_blank">View Credential</a>
+                            </div>
+                        </div>
+
+                        <!-- Certification 3 -->
+                        <div class="cert-item">
+                            <h3>MongoDB Developer</h3>
+                            <div class="cert-details">
+                                <div class="issuer">MongoDB University</div>
+                                <div class="date">Issued: November 2022</div>
+                                <p>Comprehensive knowledge of MongoDB database design, querying, and optimization techniques.</p>
+                                <a href="#" class="cert-link" target="_blank">View Credential</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Technical Skills Visualization -->
+                <div class="technical-skills">
+                    <h3 data-i18n="tech-skills-subtitle">Technical Skills</h3>
+                    <div class="skills-categories">
+                        <!-- Frontend Skills -->
+                        <div class="skills-category">
+                            <h3 data-i18n="frontend-category">Frontend</h3>
+
+                            <div class="skill-item">
+                                <div class="skill-info">
+                                    <span class="skill-name">HTML/CSS</span>
+                                    <span class="skill-level">95%</span>
+                                </div>
+                                <div class="skill-bar">
+                                    <div class="skill-progress" data-percent="95"></div>
+                                </div>
+                                <div class="skill-description">Advanced knowledge of semantic HTML and modern CSS techniques.</div>
+                            </div>
+
+                            <div class="skill-item">
+                                <div class="skill-info">
+                                    <span class="skill-name">JavaScript</span>
+                                    <span class="skill-level">90%</span>
+                                </div>
+                                <div class="skill-bar">
+                                    <div class="skill-progress" data-percent="90"></div>
+                                </div>
+                                <div class="skill-description">Strong proficiency in ES6+ features and DOM manipulation.</div>
+                            </div>
+
+                            <div class="skill-item">
+                                <div class="skill-info">
+                                    <span class="skill-name">React</span>
+                                    <span class="skill-level">85%</span>
+                                </div>
+                                <div class="skill-bar">
+                                    <div class="skill-progress" data-percent="85"></div>
+                                </div>
+                                <div class="skill-description">Experience with hooks, context API, and state management.</div>
+                            </div>
+                        </div>
+
+                        <!-- Backend Skills -->
+                        <div class="skills-category">
+                            <h3 data-i18n="backend-category">Backend</h3>
+
+                            <div class="skill-item">
+                                <div class="skill-info">
+                                    <span class="skill-name">Node.js</span>
+                                    <span class="skill-level">80%</span>
+                                </div>
+                                <div class="skill-bar">
+                                    <div class="skill-progress" data-percent="80"></div>
+                                </div>
+                                <div class="skill-description">Building RESTful APIs and server-side applications.</div>
+                            </div>
+
+                            <div class="skill-item">
+                                <div class="skill-info">
+                                    <span class="skill-name">Express.js</span>
+                                    <span class="skill-level">85%</span>
+                                </div>
+                                <div class="skill-bar">
+                                    <div class="skill-progress" data-percent="85"></div>
+                                </div>
+                                <div class="skill-description">Creating robust middleware and API endpoints.</div>
+                            </div>
+
+                            <div class="skill-item">
+                                <div class="skill-info">
+                                    <span class="skill-name">PHP</span>
+                                    <span class="skill-level">75%</span>
+                                </div>
+                                <div class="skill-bar">
+                                    <div class="skill-progress" data-percent="75"></div>
+                                </div>
+                                <div class="skill-description">Web development with PHP and common frameworks.</div>
+                            </div>
+                        </div>
+
+                        <!-- Database Skills -->
+                        <div class="skills-category">
+                            <h3 data-i18n="database-category">Databases</h3>
+
+                            <div class="skill-item">
+                                <div class="skill-info">
+                                    <span class="skill-name">MongoDB</span>
+                                    <span class="skill-level">90%</span>
+                                </div>
+                                <div class="skill-bar">
+                                    <div class="skill-progress" data-percent="90"></div>
+                                </div>
+                                <div class="skill-description">Schema design, aggregation, and performance optimization.</div>
+                            </div>
+
+                            <div class="skill-item">
+                                <div class="skill-info">
+                                    <span class="skill-name">MySQL</span>
+                                    <span class="skill-level">85%</span>
+                                </div>
+                                <div class="skill-bar">
+                                    <div class="skill-progress" data-percent="85"></div>
+                                </div>
+                                <div class="skill-description">Complex queries, database design, and optimization.</div>
+                            </div>
+
+                            <div class="skill-item">
+                                <div class="skill-info">
+                                    <span class="skill-name">Firebase</span>
+                                    <span class="skill-level">80%</span>
+                                </div>
+                                <div class="skill-bar">
+                                    <div class="skill-progress" data-percent="80"></div>
+                                </div>
+                                <div class="skill-description">Real-time database, authentication, and cloud functions.</div>
+                            </div>
+                        </div>
+
+                        <!-- Tools & DevOps Skills -->
+                        <div class="skills-category">
+                            <h3 data-i18n="tools-category">Tools & DevOps</h3>
+
+                            <div class="skill-item">
+                                <div class="skill-info">
+                                    <span class="skill-name">Git & GitHub</span>
+                                    <span class="skill-level">95%</span>
+                                </div>
+                                <div class="skill-bar">
+                                    <div class="skill-progress" data-percent="95"></div>
+                                </div>
+                                <div class="skill-description">Version control, branching strategies, and collaboration.</div>
+                            </div>
+
+                            <div class="skill-item">
+                                <div class="skill-info">
+                                    <span class="skill-name">Docker</span>
+                                    <span class="skill-level">75%</span>
+                                </div>
+                                <div class="skill-bar">
+                                    <div class="skill-progress" data-percent="75"></div>
+                                </div>
+                                <div class="skill-description">Containerization and deployment of applications.</div>
+                            </div>
+
+                            <div class="skill-item">
+                                <div class="skill-info">
+                                    <span class="skill-name">AWS</span>
+                                    <span class="skill-level">80%</span>
+                                </div>
+                                <div class="skill-bar">
+                                    <div class="skill-progress" data-percent="80"></div>
+                                </div>
+                                <div class="skill-description">Cloud services including EC2, S3, Lambda, and more.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+        </section>
+
+        <section class="featured-projects">
+            <div class="section-header">
+                <h2 data-i18n="featured-projects">Featured Projects</h2>
+                <div class="underline"></div>
+            </div>
+            <div class="projects-preview">
+                <!-- Project 1: To-Do List Application -->
+                <div class="project-card" data-project-id="todo">
+                    <div class="project-info">
+                        <h3>To-Do List Application</h3>
+                        <p>A clean and intuitive to-do list application that helps users organize tasks, set priorities, and track completion.</p>
+                        <div class="project-tags">
+                            <span>JavaScript</span>
+                            <span>HTML/CSS</span>
+                            <span>LocalStorage</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project 2: Text Editor Tool -->
+                <div class="project-card" data-project-id="texteditor">
+                    <div class="project-info">
+                        <h3>Text Editor Tool</h3>
+                        <p>A browser-based text editor with rich formatting options, syntax highlighting for multiple programming languages, and collaborative editing features.</p>
+                        <div class="project-tags">
+                            <span>JavaScript</span>
+                            <span>Rich Text</span>
+                            <span>UI/UX</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project 3: Tic-Tac-Toe Game -->
+                <div class="project-card" data-project-id="tictactoe">
+                    <div class="project-info">
+                        <h3>Tic-Tac-Toe Game (XO Game)</h3>
+                        <p>A modern implementation of the classic Tic-Tac-Toe game with single and multiplayer modes, customizable game boards, and difficulty levels.</p>
+                        <div class="project-tags">
+                            <span>JavaScript</span>
+                            <span>Game</span>
+                            <span>AI</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="center-btn">
+                <a href="projects.html" class="btn primary-btn" data-i18n="hero-btn-work">View My Work</a>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">
+                <h2>Abdullah<span>.</span></h2>
+                <p data-i18n="footer-title">Web Developer</p>
+            </div>
+            <div class="footer-links">
+                <h3 data-i18n="footer-links">Quick Links</h3>
+                <ul>
+                    <li><a href="index.html" data-i18n="nav-home">Home</a></li>
+                    <li><a href="projects.html" data-i18n="nav-projects">Projects</a></li>
+                    <li><a href="blog.html" data-i18n="nav-blog">Blog</a></li>
+                    <li><a href="contact.html" data-i18n="nav-contact">Contact</a></li>
+                </ul>
+            </div>
+            <div class="footer-contact">
+                <h3 data-i18n="footer-contact">Contact Me</h3>
+                <p><i class="fas fa-envelope"></i> abdellhweb@gmail.com</p>
+                <p><i class="fas fa-map-marker-alt"></i> Morocco</p>
+                <div class="social-links">
+                    <a href="https://www.instagram.com/abde.llahweb/" target="_blank"><i class="fab fa-instagram"></i></a>
+                    <a href="https://www.linkedin.com/in/abdellah-mouhamiti-7628b4331/" target="_blank"><i class="fab fa-linkedin"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 Abdullah. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script src="js/theme.js"></script>
+    <script src="js/language.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/skills.js"></script>
+    <script src="js/projects-data.js"></script>
+    <script src="js/scroll-effects.js"></script>
+    <script src="js/certifications.js"></script>
+    <script src="js/pwa.js"></script>
+    <script src="js/schema.js"></script>
+    <script src="js/seo.js"></script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+# Abdullah Portfolio Website
+# robots.txt
+
+User-agent: *
+Allow: /
+Allow: /index.html
+Allow: /projects.html
+Allow: /blog.html
+Allow: /contact.html
+Allow: /css/
+Allow: /js/
+Allow: /assets/
+Disallow: /admin.html
+Disallow: /admin/
+Disallow: /api/
+
+Sitemap: https://abdullah-portfolio.com/sitemap.xml
